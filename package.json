@@ -1,0 +1,22 @@
+{
+  "name": "Drive",
+  "version": "0.0.0",
+  "description": "An application to store users files.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://marcelonaegeler@github.com/marcelonaegeler/drive-node.git"
+  },
+  "author": "Marcelo A. Naegeler (marcelo.andre.naegeler@gmail.com)",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/marcelonaegeler/drive-node/issues"
+  },
+  "dependencies": {
+    "express": "~4.13.1",
+    "swig": "~1.4.2"
+  }
+}

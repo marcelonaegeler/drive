@@ -1,0 +1,21 @@
+{% extends 'layout/layout.html' %}
+{% block head %}{% include 'layout/initial-style.html' %}{% endblock %}
+{% block body %}
+<body>
+	<section class="topbar">
+		<button type="button" class="button">Upload!</button>
+		<button type="button" class="button">Create directory</button>
+	</section>
+
+	<section class="drive-body">
+		<div class="tr tr-h">
+			<div class="ti ti-8">Nome</div>
+			<div class="ti ti-4">Tamanho</div>
+		</div>
+		<div class="tr tr-b">
+			<a href="#" class="ti ti-8"><i class="material-icons md-18">folder</i> Teste 01</a>
+			<span class="ti ti-4">395kb</span>
+		</div>
+	</section>
+</body>
+{% endblock %}
