@@ -8,6 +8,7 @@ define('drive'
 
 		var DOMElements = {
 			showItems: document.querySelector('.drive-show-items')
+			, backButton: document.querySelector('.drive-action-back')
 		};
 
 		window.layouts = {
@@ -20,14 +21,27 @@ define('drive'
 
 		var drive = (function() {
 			var currentDirectory = '';
+			var currentDirectoryInfo = {};
 
 			var setDirectory = function() {
 				currentDirectory = window.location.hash.split('#')[1] || '';
 				list();
 			};
 
+			var setDirectoryInfo = function(newData) {
+				currentDirectoryInfo = newData;
+
+				if(!currentDirectoryInfo.parent)
+					DOMElements.backButton.style.display = 'none';
+				else {
+					DOMElements.backButton.style.display = '';
+					DOMElements.backButton.href = "#"+ (currentDirectoryInfo.parent != 'root' ? currentDirectoryInfo.parent : '');
+				}
+			};
+
 			var routes = {
 				getItems: { method: 'GET', url: '/api/items/' }
+				, mkdir: { method: 'POST', url: '/api/mkdir' }
 			};
 
 			var list = function() {
@@ -36,8 +50,29 @@ define('drive'
 					, url: routes.getItems.url + currentDirectory
 					, success: function(data) {
 						var html = '';
-						for(var item in data) html += _.template(layouts.listItem)(data[item]);
+						var items = data.items;
+						setDirectoryInfo(data.currentDirectory);
+						
+						for(var item in items) html += _.template(layouts.listItem)(items[item]);
 						DOMElements.showItems.innerHTML = html;
+					}
+					, error: function(data) {
+						return new Error(data);
+					}
+				});
+			};
+
+			var mkdir = function(name) {
+
+				api.ajax({
+					method: routes.mkdir.method
+					, url: routes.mkdir.url
+					, data: {
+						name: name
+						, parent: currentDirectoryInfo.parent
+					}
+					, success: function(data) {
+						console.log(data);
 					}
 					, error: function(data) {
 						return new Error(data);
@@ -48,11 +83,17 @@ define('drive'
 			return {
 				setDirectory: setDirectory
 				, list: list
+				, mkdir: mkdir
 			};
 		})();
 
 		drive.setDirectory();
 
 		window.addEventListener('hashchange', drive.setDirectory);
+
+		window.mkdir = function() {
+			var name = prompt('Insert the name:');
+			drive.mkdir(name);
+		};
 	}
 );

@@ -28,6 +28,9 @@ a {
 	background-color: #fff;
 	color: #555;
 }
+.tr-b + .tr-b {
+	border-top: 1px solid #efefef;
+}
 .tr .ti {
 	float: left;
 }
@@ -50,7 +53,7 @@ a {
 }
 
 .btn-breadcumb:hover {
-	border-color: #aaa;
+	border-color: #ddd;
 }
 .btn-action {
 	color: #fff;
@@ -58,11 +61,3 @@ a {
 	background-color: #D34E4E;
 	box-shadow: 1px 1px 3px #aaa;
 }
-/*
-.back-button {
-	display: block;
-	padding: 8px;
-	border-radius: 3px;
-	border: 1px solid #fff;
-}
-.back-button:hover*/
