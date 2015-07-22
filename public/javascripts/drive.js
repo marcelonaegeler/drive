@@ -1,44 +1,58 @@
-(function() {
-	"use strict";
-	var checks = document.querySelectorAll('.icon-check');
-
-	var api = (function() {
-		var setLabel = function(event) {
-			var check = event.target;
-			check.checked ? check.parentNode.classList.add('checked') : check.parentNode.classList.remove('checked');
-			drive.list();
+define('drive'
+	, [ 'underscore', 'api' ]
+	, function() {
+		"use strict";
+		_.templateSettings = {
+		  interpolate: /\{\{(.+?)\}\}/g
 		};
 
-		var parseHtml = function(str, data) {
-			for(var i in data) str = str.replace(new RegExp('{'+ i +'}', 'g'), data[i]);
-			return str;
+		var DOMElements = {
+			showItems: document.querySelector('.drive-show-items')
 		};
 
-		return {
-			setLabel: setLabel
-			, parseHtml: parseHtml
-		};
-	})();
-
-
-	var drive = (function() {
-		var list = function() {
-			var request = new XMLHTTPRequest();
-			request.open('GET', '/api/items/', true);
-			request.send(null);
+		window.layouts = {
+			listItem: [ '<div class="tr tr-b"><span class="ti ti-8"><a href="{{url || "#"+ id}}"{{url ? " target=\'_blank\'" : ""}}'
+				, ' class="ti-content">{{type == "folder" ? layouts.iconFolder : layouts.iconFile }} {{name}}</a></span>'
+				, '<span class="ti ti-4"><span class="ti-content">{{size}}</span></span></div>' ].join('')
+			, iconFolder: '<i class="material-icons md-18">folder</i>'
+			, iconFile: '<i class="material-icons md-18">description</i>'
 		};
 
-		return {
-			list: list
-		};
-	})();
+		var drive = (function() {
+			var currentDirectory = '';
 
-	
+			var setDirectory = function() {
+				currentDirectory = window.location.hash.split('#')[1] || '';
+				list();
+			};
 
-	var checksLength = checks.length
-		, i = 0;
-	while(i < checksLength) {
-		checks[i].addEventListener('change', api.setLabel);
-		i++;
+			var routes = {
+				getItems: { method: 'GET', url: '/api/items/' }
+			};
+
+			var list = function() {
+				api.ajax({
+					method: routes.getItems.method
+					, url: routes.getItems.url + currentDirectory
+					, success: function(data) {
+						var html = '';
+						for(var item in data) html += _.template(layouts.listItem)(data[item]);
+						DOMElements.showItems.innerHTML = html;
+					}
+					, error: function(data) {
+						return new Error(data);
+					}
+				});
+			};
+
+			return {
+				setDirectory: setDirectory
+				, list: list
+			};
+		})();
+
+		drive.setDirectory();
+
+		window.addEventListener('hashchange', drive.setDirectory);
 	}
-})();
+);

@@ -4,5 +4,7 @@
   "homepage": "",
   "license": "MIT",
   "dependencies": {
+    "requirejs": "~2.1.19",
+    "underscore": "~1.8.3"
   }
 }

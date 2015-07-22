@@ -17,8 +17,21 @@ app.get('/', function(req, res) {
 	res.render('index', { title: 'Drive' });
 });
 
-app.get('/api/items/?(:id)', function(req, res) {
-	console.log(req.params, req.param('id'));
+app.get('/api/items/?(:id)?', function(req, res) {
+	if(!req.params.id) {
+		var data = [
+			{ id: 123456, name: 'Folder 01', parent: null, type: 'folder', size: null, url: null }
+			, { id: 234567, name: 'Folder 02', parent: null, type: 'folder', size: null, url: null }
+			, { id: 345678, name: 'File 01', parent: null, type: 'file', size: '350Kb', url: 'http://sou.digital' }
+		];
+	} else {
+		var data = [
+			{ id: 123456, name: 'Folder 01', parent: req.params.id, type: 'folder', size: null, url: null }
+			, { id: 345678, name: 'File 01', parent: req.params.id, type: 'file', size: '350Kb', url: 'http://sou.digital' }
+		];
+	}
+
+	return res.send(data);
 });
 
 var server = app.listen(3001, function() {
