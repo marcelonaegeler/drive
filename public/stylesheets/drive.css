@@ -11,7 +11,7 @@ a {
 }
 .material-icons.md-18 {
 	font-size: 18px;
-	vertical-align: bottom;
+	vertical-align: middle;
 }
 
 .left { float: left; }
@@ -19,7 +19,7 @@ a {
 
 .tr {
 	color: #333;
-	line-height: 18px;
+	line-height: 28px;
 }
 .tr-h {
 	background-color: #fafafa;
@@ -39,6 +39,9 @@ a {
 }
 .ti-8 {
 	width: 66.66%;
+}
+.ti-12 {
+	width: 100%;
 }
 .tr .ti .ti-content {
 	padding: 15px;
@@ -60,4 +63,51 @@ a {
 	border-color: #D34E4E;
 	background-color: #D34E4E;
 	box-shadow: 1px 1px 3px #aaa;
+}
+
+.tr-input {
+  display: inline-block;
+  padding: 5px;
+  width: 35%;
+  border: 1px solid #ddd;
+  line-height: 16px;
+  font-size: 14px;
+  color: #666;
+}
+
+
+/*
+* Notify
+*/
+.notify {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 300px;
+	height: 0;
+	z-index: 2;
+}
+.drive-notify {
+	position: absolute;
+	bottom: -60px;
+	left: 20px;
+	padding: 20px 60px 20px 20px;
+	width: 220px;
+	background-color: #333;
+	color: #fff;
+	font-size: 16px;
+	box-shadow: 4px 4px 7px #aaa;
+	border-radius: 3px;
+	transition: 0.2s bottom ease;
+}
+.drive-notify.open {
+	bottom: 20px;
+}
+.drive-notify-close {
+	position: absolute;
+	top: 50%;
+	right: 12px;
+	margin-top: -12px;
+	height: 24px;
+  display: block;
 }

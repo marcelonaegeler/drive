@@ -26,8 +26,19 @@
 			<div class="tr tr-b">
 				<div class="ti"><span class="ti-content">Loading...</span></div>
 			</div>
+		</div>	
+	</section>
+
+	<section class="notify">
+		<div class="drive-notify">
+			<span class="drive-notify-text"></span>
+			<a href="#" class="drive-notify-close"><i class="material-icons">close</i></a>
 		</div>
 	</section>
+	
+
+	<!-- Input to simulate focusout -->
+	<input type="text" id="focusOutTrigger" style="display: block; width: 0; height: 0; overflow: hidden; border: none;">
 	<script data-main="/javascripts/main.js" src="/vendor/requirejs/require.js"></script>
 </body>
 {% endblock %}

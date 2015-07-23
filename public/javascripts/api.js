@@ -1,4 +1,16 @@
 var api = (function() {
+	var getEncode = function(obj) {
+		var str = '?';
+		for(var el in obj) str += [ el, '=', obj[el], '&' ].join('');
+		return str.slice(0, str.length-1);
+	};
+
+	var postEncode = function(obj) {
+		var str = '';
+		for(var el in obj) str += [ el, '=', obj[el], '&' ].join('');
+		return str.slice(0, str.length-1);
+	};
+
 	var ajax = function(options) {
 		var method = options.method || 'GET'
 			, url = options.url || null
@@ -10,17 +22,14 @@ var api = (function() {
 
 		if(method == 'GET') {
 			if(typeof data == 'object') {
-				var dataStr = '?';
-				for(var el in data) dataStr += [ el, '=', data[el], '&' ].join('');
-				url += dataStr.slice(0, dataStr.length-1);
+				url += getEncode(data);
 			} else {
 				url += data;
 				data = null;
 			}
 		} else if(method == 'POST') {
-			var formData = new FormData();
-			for(var i in data) formData.append(i, data[i]);
-			data = JSON.stringify(formData);
+			data = postEncode(data);
+			setPostHeader = true;
 		}
 
 		var request = new XMLHttpRequest();
@@ -31,7 +40,7 @@ var api = (function() {
 			}
 		};
 		request.open(method, url, true);
-		setPostHeader && request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		setPostHeader && request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 		request.send(data);
 	};
 
