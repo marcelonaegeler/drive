@@ -57,8 +57,12 @@ app.get('/api/items/?(:id)?', function(req, res) {
 	var directories = db.get('directories');
 	directories.find({}, function(err, docs) {
 		if(err) throw err;
-		return res.send({ directories: docs, currentDirectory: currentDirectory });
+		data.directories = docs;
 	});
+
+	function response() {
+		return res.send(data);
+	}
 });
 
 app.post('/api/mkdir', function(req, res) {
