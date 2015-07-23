@@ -13,7 +13,15 @@ define('drive'
 		};
 
 		window.layouts = {
+			/*
 			listItem: [ '<div class="tr tr-b"><span class="ti ti-8"><a href="{{url || "#"+ id}}"{{url ? " target=\'_blank\'" : ""}}'
+				, ' class="ti-content">{{type == "folder" ? layouts.iconFolder : layouts.iconFile }} {{name}}</a></span>'
+				, '<span class="ti ti-4"><span class="ti-content">{{size}}</span></span></div>' ].join('')
+			*/
+			listFolder: [ '<div class="tr tr-b"><span class="ti ti-8"><a href="{{"#"+ _id}}"'
+				, ' class="ti-content">{{layouts.iconFolder}} {{name}}</a></span>'
+				, '<span class="ti ti-4"><span class="ti-content"> - </span></span></div>' ].join('')
+			, listFile: [ '<div class="tr tr-b"><span class="ti ti-8"><a href="{{url || "#"+ id}}"{{url ? " target=\'_blank\'" : ""}}'
 				, ' class="ti-content">{{type == "folder" ? layouts.iconFolder : layouts.iconFile }} {{name}}</a></span>'
 				, '<span class="ti ti-4"><span class="ti-content">{{size}}</span></span></div>' ].join('')
 			, emptyList: '<div class="tr tr-b"><span class="ti ti-12"><span class="ti-content">Não há nada aqui :(</span></span></div>'
@@ -55,11 +63,16 @@ define('drive'
 					, url: routes.getItems.url + currentDirectory
 					, success: function(data) {
 						var html = ''
-							, items = data.items;
+							, dirs = data.directories
+							, files = data.files
+							;
 						setDirectoryInfo(data.currentDirectory);
+
+						console.log(data);
 						
-						for(var item in items) html += _.template(layouts.listItem)(items[item]);
-						if(!items.length) html += layouts.emptyList;
+						for(var item in dirs) html += _.template(layouts.listFolder)(dirs[item]);
+						for(var item in files) html += _.template(layouts.listFolder)(files[item]);
+						if(!dirs.length && !files.length) html += layouts.emptyList;
 						DOMElements.showItems.innerHTML = html;
 					}
 					, error: function(data) {

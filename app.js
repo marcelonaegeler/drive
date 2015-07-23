@@ -2,6 +2,8 @@ var express = require('express')
 	, app = express()
 	, swig = require('swig')
 	, bodyParser = require('body-parser')
+	, mongo = require('mongodb')
+	, db = require('monk')('localhost:27017/drive')
 	;
 
 // Configs
@@ -14,6 +16,12 @@ app.use(express.static(__dirname +'/public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Pass the DB connection to the routes
+app.use(function(req, res, next){
+  req.db = db;
+  next();
+});
+
 // Routes
 app.get('/', function(req, res) {
 	res.render('index', { title: 'Drive' });
@@ -22,6 +30,7 @@ app.get('/', function(req, res) {
 app.get('/api/items/?(:id)?', function(req, res) {
 	var currentDirectory = {}
 		, data = [];
+
 	if(!req.params.id) {
 		currentDirectory = { id: null, name: 'My drive', parent: null };
 		var data = [
@@ -45,11 +54,20 @@ app.get('/api/items/?(:id)?', function(req, res) {
 		currentDirectory = { id: '234567', name: 'My drive', parent: 'root' };
 	}
 
-	return res.send({ items: data, currentDirectory: currentDirectory });
+	var directories = db.get('directories');
+	directories.find({}, function(err, docs) {
+		if(err) throw err;
+		return res.send({ directories: docs, currentDirectory: currentDirectory });
+	});
 });
 
 app.post('/api/mkdir', function(req, res) {
-	return res.send(req.body);
+	var directories = db.get('directories');
+	directories.insert({ name: req.body.name, parent: req.body.parent }, function(err, docs) {
+		if(err) throw err;
+		console.log(err, docs);
+		return res.send(req.body);
+	});
 });
 
 app.get('/*', function(req, res) {
