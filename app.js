@@ -4,6 +4,8 @@ var express = require('express')
 	, bodyParser = require('body-parser')
 	, mongo = require('mongodb')
 	, db = require('monk')('localhost:27017/drive')
+	, _ = require('underscore')
+	, multiparty = require('multiparty')
 	;
 
 // Configs
@@ -29,36 +31,30 @@ app.get('/', function(req, res) {
 
 app.get('/api/items/?(:id)?', function(req, res) {
 	var currentDirectory = {}
-		, data = [];
+		, data = {};
 
-	if(!req.params.id) {
-		currentDirectory = { id: null, name: 'My drive', parent: null };
-		var data = [
-			{ id: 123456, name: 'Folder 01', parent: null, type: 'folder', size: null, url: null }
-			, { id: 234567, name: 'Folder 02', parent: null, type: 'folder', size: null, url: null }
-			, { id: 345678, name: 'File 01', parent: null, type: 'file', size: '350Kb', url: 'http://sou.digital' }
-		];
-	} else if(req.params.id == '123456') {
-		currentDirectory = { id: '123456', name: 'Folder 01', parent: 'root' };
-		var data = [
-			{ id: 345678, name: 'Folder 01', parent: req.params.id, type: 'folder', size: null, url: null }
-			, { id: 456789, name: 'File 01', parent: req.params.id, type: 'file', size: '350Kb', url: 'http://sou.digital' }
-		];
-	} else if(req.params.id == '345678') {
-		currentDirectory = { id: '345678', name: 'My drive', parent: '123456' };
-		var data = [
-			{ id: 345678, name: 'Folder 01-02', parent: 345678, type: 'folder', size: null, url: null }
-			, { id: 456789, name: 'File 01', parent: 345678, type: 'file', size: '350Kb', url: 'http://sou.digital' }
-		];
-	} else {
-		currentDirectory = { id: '234567', name: 'My drive', parent: 'root' };
-	}
+	var renderView = _.after(3, response);
 
 	var directories = db.get('directories');
-	directories.find({}, function(err, docs) {
+	directories.find({ parent: req.params.id ? req.params.id : 'root' }, function(err, docs) {
 		if(err) throw err;
 		data.directories = docs;
+		renderView();
 	});
+	var toSearch = req.params.id ? { _id: req.params.id } : { root: true };
+	directories.findOne(toSearch, function(err, doc) {
+		if(err) throw err;
+		data.currentDirectory = doc;
+		renderView();
+	});
+
+	var files = db.get('files');
+	files.find({}, function(err, docs) {
+		if(err) throw err;
+		data.files = docs;
+		renderView();
+	});
+
 
 	function response() {
 		return res.send(data);
@@ -68,10 +64,20 @@ app.get('/api/items/?(:id)?', function(req, res) {
 app.post('/api/mkdir', function(req, res) {
 	var directories = db.get('directories');
 	directories.insert({ name: req.body.name, parent: req.body.parent }, function(err, docs) {
-		if(err) throw err;
-		console.log(err, docs);
-		return res.send(req.body);
+		var response = { status: 0, message: '' };
+		if(err) {
+			response.status = 1;
+			response.message = err;
+		}
+		return res.send(response);
 	});
+});
+
+app.post('/api/upload', function(req, res) {
+ 	var form = new multiparty.Form();
+ 	form.parse(req, function(err, fields, files) {
+		return res.send({ fields: fields, files: files });
+ 	});
 });
 
 app.get('/*', function(req, res) {

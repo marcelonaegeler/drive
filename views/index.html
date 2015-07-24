@@ -13,7 +13,7 @@
 					<a href="#" class="btn btn-breadcumb drive-action-back"><i class="material-icons md-18">arrow_back</i> Go back</a>
 				</div>
 				<div class="right">
-					<button type="button" class="btn btn-action"><i class="material-icons md-18">cloud_upload</i> Upload</button>
+					<button type="button" class="btn btn-action" onclick="javascript:upload();"><i class="material-icons md-18">cloud_upload</i> Upload</button>
 					<button type="button" class="btn btn-action" onclick="javascript:mkdir();"><i class="material-icons md-18">folder</i> Create directory</button>
 				</div>
 			</div>
@@ -35,7 +35,16 @@
 			<a href="#" class="drive-notify-close"><i class="material-icons">close</i></a>
 		</div>
 	</section>
-	
+
+	<section class="uploadList">
+		<a href="#" class="uploadHead">Arquivos para upload</a>
+		<div class="uploadListBody">
+			<div class="drive-upload-list"></div>
+		</div>
+	</section>
+
+	<!-- Upload input -->
+	<input type="file" name="upload" multiple class="drive-input-upload">
 
 	<!-- Input to simulate focusout -->
 	<input type="text" id="focusOutTrigger" style="display: block; width: 0; height: 0; overflow: hidden; border: none;">
