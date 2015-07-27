@@ -6,28 +6,37 @@
 		<h2>Drive do celo</h2>
 	</section>
 
-	<section class="drive-body">
-		<div class="floating-bar">
-			<div class="tr">
-				<div class="left">
-					<a href="#" class="btn btn-breadcumb drive-action-back"><i class="material-icons md-18">arrow_back</i> Go back</a>
-				</div>
-				<div class="right">
-					<button type="button" class="btn btn-action" onclick="javascript:upload();"><i class="material-icons md-18">cloud_upload</i> Upload</button>
-					<button type="button" class="btn btn-action" onclick="javascript:mkdir();"><i class="material-icons md-18">folder</i> Create directory</button>
-				</div>
-			</div>
+	<div class="clearfix body">
+		<div class="left sidebar">
+			<ul>
+				<li><a href="#">Drive</a></li>
+			</ul>
 		</div>
-		<div class="tr tr-h">
-			<div class="ti ti-8"><span class="ti-content">Name</span></div>
-			<div class="ti ti-4"><span class="ti-content">Size</span></div>
+		<div class="left body-list">
+			<section class="drive-body">
+				<div class="floating-bar">
+					<div class="tr">
+						<div class="left">
+							<a href="#" class="btn btn-breadcumb drive-action-back"><i class="material-icons md-18">arrow_back</i> Go back</a>
+						</div>
+						<div class="right">
+							<button type="button" class="btn btn-action" onclick="javascript:upload();"><i class="material-icons md-18">cloud_upload</i> Upload</button>
+							<button type="button" class="btn btn-action" onclick="javascript:mkdir();"><i class="material-icons md-18">folder</i> Create directory</button>
+						</div>
+					</div>
+				</div>
+				<div class="tr tr-h">
+					<div class="ti ti-8"><span class="ti-content">Name</span></div>
+					<div class="ti ti-4"><span class="ti-content">Size</span></div>
+				</div>
+				<div class="drive-show-items">
+					<div class="tr tr-b">
+						<div class="ti"><span class="ti-content">Loading...</span></div>
+					</div>
+				</div>	
+			</section>
 		</div>
-		<div class="drive-show-items">
-			<div class="tr tr-b">
-				<div class="ti"><span class="ti-content">Loading...</span></div>
-			</div>
-		</div>	
-	</section>
+	</div>
 
 	<section class="notify">
 		<div class="drive-notify">

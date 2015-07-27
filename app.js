@@ -26,7 +26,14 @@ app.use(function(req, res, next){
 
 // Routes
 app.get('/', function(req, res) {
-	res.render('index', { title: 'Drive' });
+	var root = db.get('directories');
+	root.findOne({ root: true }, function(err, doc) {
+		if(err) throw err;
+		if(!doc) {
+			root.insert({ name: 'Drive', root: true, parent: null });
+		}
+		return res.render('index', { title: 'Drive' });
+	});
 });
 
 app.get('/api/items/?(:id)?', function(req, res) {
@@ -41,6 +48,7 @@ app.get('/api/items/?(:id)?', function(req, res) {
 		data.directories = docs;
 		renderView();
 	});
+	
 	var toSearch = req.params.id ? { _id: req.params.id } : { root: true };
 	directories.findOne(toSearch, function(err, doc) {
 		if(err) throw err;
@@ -78,6 +86,25 @@ app.post('/api/upload', function(req, res) {
  	form.parse(req, function(err, fields, files) {
 		return res.send({ fields: fields, files: files });
  	});
+});
+
+app.post('/api/rmdir', function(req, res) {
+	if(!req.body._id) return res.send({ status: 1 });
+	var directories = db.get('directories');
+	directories.remove({ _id: req.body._id });
+	return res.send({ status: 0 });
+});
+
+app.post('/api/renameDir', function(req, res) {
+	if(!req.body._id || !req.body.name) return res.send({ status: 1 });
+	var directories = db.get('directories');
+	directories.findById(req.body._id, function(err, doc) {
+		if(err) throw err;
+		doc.name = req.body.name;
+		directories.update({ _id: doc._id }, doc, function(ok) {
+			return res.send({ status: 0 });
+		});
+	});
 });
 
 app.get('/*', function(req, res) {

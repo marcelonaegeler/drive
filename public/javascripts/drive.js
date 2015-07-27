@@ -27,15 +27,21 @@ define('drive'
 		window.layouts = {
 			listFolder: [ '<div class="tr tr-b"><span class="ti ti-8"><a href="{{"#"+ _id}}"'
 				, ' class="ti-content">{{layouts.iconFolder}} {{name}}</a></span>'
-				, '<span class="ti ti-4"><span class="ti-content"> - {{layouts.listItemOptions}}</span></span></div>' ].join('')
+				, '<span class="ti ti-4"><span class="ti-content"> - '
+				, '<span class="list-options"><a href="javascript:renameDir(\'{{_id}}\')">Rename</a>'
+				, '<a href="javascript:rmdir(\'{{_id}}\')">Delete</a></span></span></span></div>' ].join('')
+			
 			, listFile: [ '<div class="tr tr-b"><span class="ti ti-8"><a href="{{url || "javascript:void(0);"}}"{{url ? " target=\'_blank\'" : ""}}'
 				, ' class="ti-content">{{type == "folder" ? layouts.iconFolder : layouts.iconFile }} {{name}}</a></span>'
-				, '<span class="ti ti-4"><span class="ti-content">{{size}}{{layouts.listItemOptions}}</span></span></div>' ].join('')
-			, emptyList: '<div class="tr tr-b"><span class="ti ti-12"><span class="ti-content">Não há nada aqui :(</span></span></div>'
+				, '<span class="ti ti-4"><span class="ti-content">{{size}}'
+				, '<span class="list-options"><a href="javascript:rename(\'{{_id}}\')">Rename</a>'
+				, '<a href="javascript:del(\'{{_id}}\')">Delete</a></span></span></span></div>' ].join('')
+			
+			, emptyList: [ '<div class="tr tr-b"><span class="ti ti-12"><span class="ti-content">'
+				, 'Não há nada aqui :(</span></span></div>' ].join('')
+			
 			, iconFolder: '<i class="material-icons md-18">folder</i>'
 			, iconFile: '<i class="material-icons md-18">description</i>'
-			, listItemOptions: [ '<span class="list-options"><a href="javascript:rename()">Rename</a>'
-				, '<a href="javascript:del()">Delete</a></span>' ].join('')
 			, mkdir: [ '<span class="ti ti-8"><span class="ti-content">'
 				, '{{layouts.iconFolder}} <input type="text" name="newFolder" class="tr-input" placeholder="New folder" /></span></span>'
 				, '<span class="ti ti-4"></span>' ].join('')
@@ -77,6 +83,8 @@ define('drive'
 				getItems: { method: 'GET', url: '/api/items' }
 				, mkdir: { method: 'POST', url: '/api/mkdir' }
 				, upload: { method: 'POST', url: '/api/upload' }
+				, rmdir: { method: 'POST', url: '/api/rmdir' }
+				, renameDir: { method: 'POST', url: '/api/renameDir' }
 			};
 
 			var list = function() {
@@ -110,7 +118,6 @@ define('drive'
 						, parent: currentDirectoryInfo.root ? 'root' : currentDirectoryInfo._id
 					}
 					, success: function(data) {
-						console.log(data);
 						list();
 						showNotification('Directory created sucessfully!');
 					}
@@ -186,13 +193,42 @@ define('drive'
 				});
 			};
 
+			var rmdir = function(id) {
+				api.ajax({
+					url: routes.rmdir.url
+					, method: routes.rmdir.method
+					, data: { _id: id }
+					, success: function(data) {
+						if(!data.status) return list();
+						else alert('Erro ao excluir.');
+					}
+					, error: function() {
+						alert('Erro ao excluir.');
+					}
+				});
+			};
+
+			var renameDir = function(id, name) {
+				api.ajax({
+					url: routes.renameDir.url
+					, method: routes.renameDir.method
+					, data: { _id: id, name: name }
+					, success: function(data) {
+						if(!data.status) return list();
+						else alert('Erro ao renomear.');
+					}
+					, error: function() {
+						alert('Erro ao renomear.');
+					}
+				});
+			};
+
 			var showNotification = function(text) {
 				DOMElements.notify.querySelector('.drive-notify-text').innerHTML = text;
 				DOMElements.notify.classList.add('open');
 
 				setTimeout(closeNotification, 3000);
 			};
-
 			var closeNotification = function() {
 				DOMElements.notify.classList.remove('open');
 				DOMElements.notify.querySelector('.drive-notify-text').innerHTML = '';
@@ -202,6 +238,8 @@ define('drive'
 				setDirectory: setDirectory
 				, list: list
 				, mkdir: mkdir
+				, rmdir: rmdir
+				, renameDir: renameDir
 				, prepareUpload: prepareUpload
 				, closeNotification: closeNotification
 			};
@@ -241,6 +279,15 @@ define('drive'
 			var click = new Event('click');
 			DOMElements.inputUpload.dispatchEvent(click);
 		};
+		window.renameDir = function(id) {
+			var newName = prompt('Novo nome para o diretório: ');
+			if(!id || !newName) return false;
+			drive.renameDir(id, newName);
+		}
+		window.rmdir = function(id) {
+			if(!id || !confirm('Deseja mesmo excluir este item?')) return false;
+			drive.rmdir(id);
+		};
 
 		/*
 		* Elements EventListeners
@@ -254,14 +301,6 @@ define('drive'
 			event.preventDefault();
 			DOMElements.uploadList.parentNode.classList.toggle('open');
 		};
-		/*
-		function(event) {
-			var filesLength = this.files.length;
-			for(var i = 0; i < filesLength; i++) uploadInfo.uploads.push(this.files[i]);
-
-			drive.prepareUpload();
-			return false;
-		};
-		*/
+		
 	}
 );
