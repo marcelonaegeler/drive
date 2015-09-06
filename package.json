@@ -1,11 +1,8 @@
 {
   "name": "Drive",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "An application to store users files.",
   "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "https://marcelonaegeler@github.com/marcelonaegeler/drive-node.git"
@@ -17,11 +14,10 @@
   },
   "dependencies": {
     "express": "~4.13.1",
-    "swig": "~1.4.2",
     "body-parser": "~1.13.2",
-    "mongodb": "~2.0.39",
     "monk": "~1.0.1",
     "underscore": "~1.8.3",
-    "multiparty": "~4.1.2"
+    "multiparty": "~4.1.2",
+    "jade": "~1.11.0"
   }
 }

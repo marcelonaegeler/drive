@@ -9,9 +9,14 @@ a {
   clear: both;
   width: 100%;
 }
+.material-icons {
+	vertical-align: middle;
+}
+.material-icons.md-16 {
+	font-size: 16px;
+}
 .material-icons.md-18 {
 	font-size: 18px;
-	vertical-align: middle;
 }
 
 .left { float: left; }
@@ -55,7 +60,7 @@ a {
 	box-shadow: 1px 1px 3px #aaa;
 }
 
-.btn-breadcumb:hover {
+.btn-breadcrumb:hover {
 	border-color: #ddd;
 }
 .btn-action {
@@ -63,6 +68,13 @@ a {
 	border-color: #D34E4E;
 	background-color: #D34E4E;
 	box-shadow: 1px 1px 3px #aaa;
+}
+.btn-list:hover {
+	color: #D34E4E;
+	border-color: #D34E4E;
+}
+.btn+.btn {
+	margin-left: 10px;
 }
 
 .tr-input {
@@ -123,24 +135,24 @@ a {
 /*
 * Upload
 */
-.uploadList {
+.upload-list {
 	position: fixed;
 	bottom: 0;
 	right: 30px;
 	width: 450px;
 	background-color: #fff;
 }
-.uploadList .uploadHead {
+.upload-list .upload-list-head {
 	display: block;
 	padding: 10px;
 	background-color: #333;
 	color: #fff;
 }
-.uploadList .uploadListBody {
+.upload-list .upload-list-body {
 	display: none;
 	padding: 20px;
 }
-.uploadList .uploadListBody.open {
+.upload-list .upload-list-body.open {
 	display: block;
 }
 .drive-upload-item span {
@@ -167,4 +179,13 @@ a {
 	z-index: 1;
 	background-color: #ccc;
 	transition: .1s width linear;
+}
+
+
+#focus-out-trigger {
+	display: block;
+	width: 0;
+	height: 0;
+	overflow: hidden;
+	border: none;
 }

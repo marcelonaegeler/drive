@@ -8,7 +8,7 @@ config.paths = {
 require.config(config);
 
 // Get the required modules from body's 'data-require'
-var modules = document.body.dataset.require.split(',');
+var modules = document.getElementById('main').getAttribute('data-require').split(',');
 var requireModules = [];
 for(var module in modules) {
 	requireModules.push(modules[module].trim());

@@ -1,20 +1,17 @@
+"use strict";
 var express = require('express')
 	, app = express()
-	, swig = require('swig')
 	, bodyParser = require('body-parser')
-	, mongo = require('mongodb')
 	, db = require('monk')('localhost:27017/drive')
 	, _ = require('underscore')
 	, multiparty = require('multiparty')
 	;
 
 // Configs
-swig.setDefaults({ cache: false });
-app.engine('html', swig.renderFile);
-app.set('view engine', 'html');
-app.set('views', __dirname +'/views');
+app.set('view engine', 'jade');
+app.set('views', './views');
 app.set('view cache', false);
-app.use(express.static(__dirname +'/public'));
+app.use(express.static('./public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -48,7 +45,7 @@ app.get('/api/items/?(:id)?', function(req, res) {
 		data.directories = docs;
 		renderView();
 	});
-	
+
 	var toSearch = req.params.id ? { _id: req.params.id } : { root: true };
 	directories.findOne(toSearch, function(err, doc) {
 		if(err) throw err;

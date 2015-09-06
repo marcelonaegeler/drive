@@ -1,0 +1,49 @@
+extends ./layout/layout.jade
+block body
+	div#main(data-require="drive")
+			
+		div.topbar
+			h2= title
+		
+		div.body
+			div.body-list
+				section.drive-body
+					section.floating-bar
+						div.tr
+							div.left
+								a.btn.btn-normal.btn-breadcrumb.drive-action-back(href="#", style="display: none;")
+									i.material-icons.md-18 arrow_back
+									|  Go back
+							div.right
+								button.btn.btn-normal.btn-action(type="button", onclick="javascript:upload();")
+									i.material-icons.md-18 cloud_upload
+									|  Upload
+								button.btn.btn-normal.btn-action(type="button", onclick="javascript:mkdir();")
+									i.material-icons.md-18 folder
+									|  Create directory
+					div.tr.tr-h
+						div.ti.ti-8
+							span.ti-content Name
+						div.ti.ti-4
+							span.ti-content Actions
+
+					div.drive-show-items
+						div.tr.tr-b
+							div.ti
+								span.ti-content Loading...
+				
+				section.notify
+					div.drive-notify
+						span.drive-notify-text
+						a.drive-notify-close(href="#")
+							i.material-icons close
+				
+				section.upload-list
+					a.upload-list-head(href="#") Files to upload
+					div.upload-list-body
+						div.drive-upload-list
+
+	input.drive-input-upload(type="file", name="upload", multiple="multiple")
+	input#focus-out-trigger(type="text")
+
+	script(src="/vendor/requirejs/require.js", data-main="/javascripts/main.js")

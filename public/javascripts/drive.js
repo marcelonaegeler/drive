@@ -1,3 +1,4 @@
+/* globals api */
 define('drive'
 	, [ 'underscore', 'api' ]
 	, function() {
@@ -18,28 +19,29 @@ define('drive'
 			, backButton: document.querySelector('.drive-action-back')
 			, notify: document.querySelector('.drive-notify')
 			, inputUpload: document.querySelector('.drive-input-upload')
-			, uploadHead: document.querySelector('.uploadHead')
+			, uploadHead: document.querySelector('.upload-list-head')
 			, uploadList: document.querySelector('.drive-upload-list')
 			, errorList: document.querySelector('.drive-error-list')
 
 		};
 
-		window.layouts = {
+		var layouts = {
 			listFolder: [ '<div class="tr tr-b"><span class="ti ti-8"><a href="{{"#"+ _id}}"'
 				, ' class="ti-content">{{layouts.iconFolder}} {{name}}</a></span>'
-				, '<span class="ti ti-4"><span class="ti-content"> - '
-				, '<span class="list-options"><a href="javascript:renameDir(\'{{_id}}\')">Rename</a>'
-				, '<a href="javascript:rmdir(\'{{_id}}\')">Delete</a></span></span></span></div>' ].join('')
-			
-			, listFile: [ '<div class="tr tr-b"><span class="ti ti-8"><a href="{{url || "javascript:void(0);"}}"{{url ? " target=\'_blank\'" : ""}}'
-				, ' class="ti-content">{{type == "folder" ? layouts.iconFolder : layouts.iconFile }} {{name}}</a></span>'
-				, '<span class="ti ti-4"><span class="ti-content">{{size}}'
-				, '<span class="list-options"><a href="javascript:rename(\'{{_id}}\')">Rename</a>'
-				, '<a href="javascript:del(\'{{_id}}\')">Delete</a></span></span></span></div>' ].join('')
-			
+				, '<span class="ti ti-4"><span class="ti-content">'
+				, '<span class="list-options">{{ layouts.listActions(_id) }}</span></span>'
+				, '</div>' ].join('')
+
+			, listFile: [ '<div class="tr tr-b"><span class="ti ti-8">'
+				, '<a href="{{url || "javascript:void(0);"}}"{{url ? " target=\'_blank\'" : ""}}'
+				, ' class="ti-content">{{ layouts.iconFile }} {{name}}</a></span>'
+				, '<span class="ti ti-4"><span class="ti-content">'
+				, '<span class="list-options">{{ layouts.listActions(_id) }}</span></span>'
+				, '</div>' ].join('')
+
 			, emptyList: [ '<div class="tr tr-b"><span class="ti ti-12"><span class="ti-content">'
 				, 'Não há nada aqui :(</span></span></div>' ].join('')
-			
+
 			, iconFolder: '<i class="material-icons md-18">folder</i>'
 			, iconFile: '<i class="material-icons md-18">description</i>'
 			, mkdir: [ '<span class="ti ti-8"><span class="ti-content">'
@@ -48,10 +50,18 @@ define('drive'
 			, uploadItem: [ '<div class="drive-upload-item clearfix" id="{{id}}"><span class="upload-item-name left">{{file.name}}</span>'
 				,'<span class="drive-progress right"><span class="drive-progress-text">Waiting...</span>'
 				, '<span class="drive-progress-bar"></span></span></div>' ].join('')
-			, uploadItemFail: [ '<a href="javascript:retryUpload({{id}})">Try again</a>' ].join('')
-			, uploadItemSuccess: [ '<span>Sucesso</span>' ].join('')
-			, uploadItemProcessing: [ '<span>Processando</span>' ].join('')
+			, uploadItemFail: '<a href="javascript:retryUpload({{id}})">Try again</a>'
+			, uploadItemSuccess: '<span>Sucesso</span>'
+			, uploadItemProcessing: '<span>Processando</span>'
+			, listActions: function(_id) {
+				return [
+					'<a href="javascript:renameDir(\'', _id, '\')" class="btn btn-small btn-list"><i class="material-icons md-16">edit</i> Rename</a>'
+					, '<a href="javascript:rmdir(\'', _id, '\')" class="btn btn-small btn-list"><i class="material-icons md-16">delete</i> Delete</a>'
+				].join('');
+			}
 		};
+
+		window.layouts = layouts;
 
 		var drive = (function() {
 			var currentDirectory = '';
@@ -64,10 +74,10 @@ define('drive'
 
 			var setDirectoryInfo = function(newData) {
 				currentDirectoryInfo = newData;
-				
+
 				if(currentDirectoryInfo) {
 					if(currentDirectoryInfo.name) document.title = currentDirectoryInfo.name;
-					
+
 					if(!currentDirectoryInfo.parent)
 						DOMElements.backButton.style.display = 'none';
 					else {
@@ -255,18 +265,18 @@ define('drive'
 			wrap.classList.add('tr', 'tr-b');
 			wrap.innerHTML = html;
 			DOMElements.showItems.insertBefore(wrap, DOMElements.showItems.firstChild);
-			
+
 			var input = wrap.querySelector('input')
 				, createDir = true;
 			input.focus();
-			input.addEventListener('focusout', function(event) {
+			input.addEventListener('blur', function() {
 				if(createDir) this.value && drive.mkdir(this.value);
 				createDir = true;
 			});
 
 			input.addEventListener('keydown', function(event) {
 				if(event.keyCode == 13) { // Enter
-					this.value && document.getElementById('focusOutTrigger').focus();
+					this.value && document.getElementById('focus-out-trigger').focus();
 					return false;
 				} else if(event.keyCode == 27) { // ESC
 					createDir = false;
@@ -281,9 +291,9 @@ define('drive'
 		};
 		window.renameDir = function(id) {
 			var newName = prompt('Novo nome para o diretório: ');
-			if(!id || !newName) return false;
+			if(!id || !newName) return;
 			drive.renameDir(id, newName);
-		}
+		};
 		window.rmdir = function(id) {
 			if(!id || !confirm('Deseja mesmo excluir este item?')) return false;
 			drive.rmdir(id);
@@ -301,6 +311,6 @@ define('drive'
 			event.preventDefault();
 			DOMElements.uploadList.parentNode.classList.toggle('open');
 		};
-		
+
 	}
 );
