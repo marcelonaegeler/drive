@@ -7,6 +7,10 @@ define('drive'
 		  interpolate: /\{\{(.+?)\}\}/g
 		};
 
+		var defaultDirectoryInfo = {
+			name: 'Drive'
+		};
+
 		var uploadInfo = {
 			uploads: []
 			, errors: []
@@ -22,7 +26,7 @@ define('drive'
 			, uploadHead: document.querySelector('.upload-list-head')
 			, uploadList: document.querySelector('.drive-upload-list')
 			, errorList: document.querySelector('.drive-error-list')
-
+			, breadcrumb: document.querySelector('.breadcrumb')
 		};
 
 		var layouts = {
@@ -42,6 +46,7 @@ define('drive'
 			, emptyList: [ '<div class="tr tr-b"><span class="ti ti-12"><span class="ti-content">'
 				, 'Não há nada aqui :(</span></span></div>' ].join('')
 
+			, breadcrumbLink: '<a href="#{{_id}}">{{name}}</a>'
 			, iconFolder: '<i class="material-icons md-18">folder</i>'
 			, iconFile: '<i class="material-icons md-18">description</i>'
 			, mkdir: [ '<span class="ti ti-8"><span class="ti-content">'
@@ -74,18 +79,19 @@ define('drive'
 
 			var setDirectoryInfo = function(newData) {
 				currentDirectoryInfo = newData;
+				console.log(currentDirectoryInfo);
 
 				if(currentDirectoryInfo) {
 					if(currentDirectoryInfo.name) document.title = currentDirectoryInfo.name;
 
-					if(!currentDirectoryInfo.parent)
-						DOMElements.backButton.style.display = 'none';
-					else {
-						DOMElements.backButton.style.display = '';
-						DOMElements.backButton.href = "#"+ (currentDirectoryInfo.parent != 'root' ? currentDirectoryInfo.parent : '');
-					}
+					DOMElements.backButton.style.display = '';
+					DOMElements.backButton.href = "#"+ (currentDirectoryInfo.parent ? currentDirectoryInfo.parent : '');
+
+					var breadcrumbs = [];
+					//for()
 				} else {
 					DOMElements.backButton.style.display = 'none';
+					document.title = defaultDirectoryInfo.name;
 				}
 			};
 
@@ -125,9 +131,9 @@ define('drive'
 					, url: routes.mkdir.url
 					, data: {
 						name: name
-						, parent: currentDirectoryInfo.root ? 'root' : currentDirectoryInfo._id
+						, parent: currentDirectoryInfo._id
 					}
-					, success: function(data) {
+					, success: function() {
 						list();
 						showNotification('Directory created sucessfully!');
 					}
@@ -208,9 +214,8 @@ define('drive'
 					url: routes.rmdir.url
 					, method: routes.rmdir.method
 					, data: { _id: id }
-					, success: function(data) {
-						if(!data.status) return list();
-						else alert('Erro ao excluir.');
+					, success: function() {
+						list();
 					}
 					, error: function() {
 						alert('Erro ao excluir.');

@@ -1,4 +1,3 @@
-"use strict";
 var express = require('express')
 	, app = express()
 	, bodyParser = require('body-parser')
@@ -23,58 +22,71 @@ app.use(function(req, res, next){
 
 // Routes
 app.get('/', function(req, res) {
-	var root = db.get('directories');
-	root.findOne({ root: true }, function(err, doc) {
+	var directories = req.db.get('directories');
+	directories.findOne({ parent: null }, function(err, doc) {
 		if(err) throw err;
 		if(!doc) {
-			root.insert({ name: 'Drive', root: true, parent: null });
+			directories.insert({ name: 'Drive', ancestors: [], parent: null });
 		}
 		return res.render('index', { title: 'Drive' });
 	});
 });
 
-app.get('/api/items/?(:id)?', function(req, res) {
-	var currentDirectory = {}
-		, data = {};
+app.get('/api/items/?(:parent)?', function(req, res) {
+	var data = {};
 
-	var renderView = _.after(3, response);
+	var renderView = _.after(3, function() {
+		return res.send(data);
+	});
 
-	var directories = db.get('directories');
-	directories.find({ parent: req.params.id ? req.params.id : 'root' }, function(err, docs) {
+	var directories = req.db.get('directories');
+	directories.find({ parent: req.params.parent || null }, function(err, docs) {
 		if(err) throw err;
 		data.directories = docs;
 		renderView();
 	});
 
-	var toSearch = req.params.id ? { _id: req.params.id } : { root: true };
-	directories.findOne(toSearch, function(err, doc) {
+	directories.findOne({ _id: directories.id(req.params.parent) }, function(err, doc) {
 		if(err) throw err;
 		data.currentDirectory = doc;
-		renderView();
+		if(!doc || !doc.ancestors.length)
+			return renderView();
+
+		for(var i = 0;  i < doc.ancestors.length; i++) {
+			doc.ancestors[i] = directories.id(doc.ancestors[i]);
+		}
+
+		directories.find({ _id: { $in: doc.ancestors } }, [ '_id', 'name' ], function(err, docs) {
+			if(err) throw err;
+			data.currentDirectory.ancestors = docs;
+			renderView();
+		});
 	});
 
-	var files = db.get('files');
+	var files = req.db.get('files');
 	files.find({}, function(err, docs) {
 		if(err) throw err;
 		data.files = docs;
 		renderView();
 	});
-
-
-	function response() {
-		return res.send(data);
-	}
 });
 
 app.post('/api/mkdir', function(req, res) {
-	var directories = db.get('directories');
-	directories.insert({ name: req.body.name, parent: req.body.parent }, function(err, docs) {
-		var response = { status: 0, message: '' };
-		if(err) {
-			response.status = 1;
-			response.message = err;
-		}
-		return res.send(response);
+	var directories = req.db.get('directories');
+
+	var dirData = {
+		name: req.body.name
+		, parent: req.body.parent
+	};
+
+	directories.findOne({ _id: dirData.parent }, [ 'ancestors' ], function(err, doc) {
+		if(err) throw err;
+		dirData.ancestors = doc.ancestors;
+		dirData.ancestors.push(dirData.parent);
+
+		directories.insert(dirData, function() {
+			return res.send({ status: 0 });
+		});
 	});
 });
 
@@ -86,19 +98,30 @@ app.post('/api/upload', function(req, res) {
 });
 
 app.post('/api/rmdir', function(req, res) {
-	if(!req.body._id) return res.send({ status: 1 });
-	var directories = db.get('directories');
-	directories.remove({ _id: req.body._id });
-	return res.send({ status: 0 });
+	if(!req.body._id) return res.status(500).send({ status: 1 });
+	var directories = req.db.get('directories');
+	directories.find({ $or: [
+			{ _id: directories.id(req.body._id) }
+			, { ancestors: { $all: [ req.body._id ] } }
+		]}, function(err, docs) {
+			if(err) throw err;
+			var toRemove = [];
+			for(var i = 0; i < docs.length; i++) {
+				toRemove.push(docs[i]._id);
+			}
+			directories.remove({ _id: { $in: toRemove } });
+			return res.send({ status: 0 });
+		}
+	);
 });
 
 app.post('/api/renameDir', function(req, res) {
 	if(!req.body._id || !req.body.name) return res.send({ status: 1 });
-	var directories = db.get('directories');
+	var directories = req.db.get('directories');
 	directories.findById(req.body._id, function(err, doc) {
 		if(err) throw err;
 		doc.name = req.body.name;
-		directories.update({ _id: doc._id }, doc, function(ok) {
+		directories.update({ _id: doc._id }, doc, function() {
 			return res.send({ status: 0 });
 		});
 	});

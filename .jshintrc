@@ -1,7 +1,6 @@
 {
 	"undef": true,
 	"unused": true,
-"predef": [ "require", "define", "_", "document", "window", "confirm", "prompt", "alert", "FormData", "Event" ],
-	"laxcomma": true,
-	"strict": true
+"predef": [ "require", "define", "_", "console", "document", "window", "confirm", "prompt", "alert", "FormData", "Event" ],
+	"laxcomma": true
 }
