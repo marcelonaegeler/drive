@@ -23,6 +23,7 @@ I'm developing this application mostly for study and test myself.
 
 ## To do
 * Recursive finder (to tree view);
-* Recursive remove (problems with orphan children);
+* ~~Recursive remove~~ (problems with orphan children);
+* ~~Breadcrumb links~~;
 * Upload file and see how to store the data (the folders will really exist in the hard drive and the files will be organized inside?);
 * Test it.
