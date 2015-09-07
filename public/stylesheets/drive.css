@@ -67,7 +67,7 @@ a {
 	color: #fff;
 	border-color: #D34E4E;
 	background-color: #D34E4E;
-	box-shadow: 1px 1px 3px #aaa;
+	/*box-shadow: 1px 1px 3px #aaa;*/
 }
 .btn-list:hover {
 	color: #D34E4E;
@@ -87,6 +87,13 @@ a {
   color: #666;
 }
 
+.breadcrumb {
+	display: inline-block;
+	margin-left: 20px;
+}
+.breadcrumb .active {
+	font-weight: bold;
+}
 
 /*
 * Notify

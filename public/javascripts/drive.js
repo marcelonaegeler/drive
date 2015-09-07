@@ -46,7 +46,7 @@ define('drive'
 			, emptyList: [ '<div class="tr tr-b"><span class="ti ti-12"><span class="ti-content">'
 				, 'Não há nada aqui :(</span></span></div>' ].join('')
 
-			, breadcrumbLink: '<a href="#{{_id}}">{{name}}</a>'
+			, breadcrumbLink: '<a href="#{{_id}}" class="btn btn-normal btn-breadcrumb {{className}}">{{name}}</a>'
 			, iconFolder: '<i class="material-icons md-18">folder</i>'
 			, iconFile: '<i class="material-icons md-18">description</i>'
 			, mkdir: [ '<span class="ti ti-8"><span class="ti-content">'
@@ -79,7 +79,8 @@ define('drive'
 
 			var setDirectoryInfo = function(newData) {
 				currentDirectoryInfo = newData;
-				console.log(currentDirectoryInfo);
+				var breadcrumbs = [];
+				breadcrumbs.push(_.template(layouts.breadcrumbLink)({ name: defaultDirectoryInfo.name, _id: '', className: (!currentDirectoryInfo ? 'active' : '') }));
 
 				if(currentDirectoryInfo) {
 					if(currentDirectoryInfo.name) document.title = currentDirectoryInfo.name;
@@ -87,12 +88,18 @@ define('drive'
 					DOMElements.backButton.style.display = '';
 					DOMElements.backButton.href = "#"+ (currentDirectoryInfo.parent ? currentDirectoryInfo.parent : '');
 
-					var breadcrumbs = [];
-					//for()
+					var ancestors = currentDirectoryInfo.ancestors;
+					for(var i = 0; i < ancestors.length; i++) {
+						breadcrumbs.push(_.template(layouts.breadcrumbLink)({ name: ancestors[i].name, _id: ancestors[i]._id, className: '' }));
+					}
+					breadcrumbs.push(_.template(layouts.breadcrumbLink)({ name: currentDirectoryInfo.name, _id: currentDirectoryInfo._id, className: 'active' }));
+
 				} else {
 					DOMElements.backButton.style.display = 'none';
 					document.title = defaultDirectoryInfo.name;
 				}
+
+				DOMElements.breadcrumb.innerHTML = breadcrumbs.join('<i class="material-icons md-18">keyboard_arrow_right</i>');
 			};
 
 			var routes = {
