@@ -1,7 +1,7 @@
 var config = {paths: {}, shim: {}};
 
 config.paths = {
-	underscore: '../vendor/underscore/underscore-min'
+	underscore: '../../vendor/underscore/underscore-min'
 };
 
 // Set config

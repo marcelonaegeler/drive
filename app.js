@@ -49,7 +49,8 @@ app.get('/api/items/?(:parent)?', function(req, res) {
 	directories.findOne({ _id: directories.id(req.params.parent) }, function(err, doc) {
 		if(err) throw err;
 		data.currentDirectory = doc;
-		if(!doc || !doc.ancestors.length)
+		
+		if(!doc || (!doc.ancestors && !doc.ancestors.length))
 			return renderView();
 
 		for(var i = 0;  i < doc.ancestors.length; i++) {
@@ -126,11 +127,11 @@ app.post('/api/renameDir', function(req, res) {
 		});
 	});
 });
-
+/*
 app.get('/*', function(req, res) {
 	res.redirect('/');
 });
-
+*/
 var server = app.listen(3001, function() {
 	var host = server.address().address
 		, port = server.address().port;

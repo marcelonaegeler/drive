@@ -1,10 +1,10 @@
 extends ./layout/layout.jade
 block body
 	div#main(data-require="drive")
-			
+
 		div.topbar
 			h2= title
-		
+
 		div.body
 			div.body-list
 				section.drive-body
@@ -32,13 +32,13 @@ block body
 						div.tr.tr-b
 							div.ti
 								span.ti-content Loading...
-				
+
 				section.notify
 					div.drive-notify
 						span.drive-notify-text
 						a.drive-notify-close(href="#")
 							i.material-icons close
-				
+
 				section.upload-list
 					a.upload-list-head(href="#") Files to upload
 					div.upload-list-body
@@ -47,4 +47,4 @@ block body
 	input.drive-input-upload(type="file", name="upload", multiple="multiple")
 	input#focus-out-trigger(type="text")
 
-	script(src="/vendor/requirejs/require.js", data-main="/javascripts/main.js")
+	script(src="/vendor/requirejs/require.js", data-main="/build/javascripts/main.js")
