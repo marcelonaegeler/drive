@@ -49,8 +49,8 @@ app.get('/api/items/?(:parent)?', function(req, res) {
 	directories.findOne({ _id: directories.id(req.params.parent) }, function(err, doc) {
 		if(err) throw err;
 		data.currentDirectory = doc;
-		
-		if(!doc || (!doc.ancestors && !doc.ancestors.length))
+
+		if(!doc || !doc.ancestors || !doc.ancestors.length)
 			return renderView();
 
 		for(var i = 0;  i < doc.ancestors.length; i++) {

@@ -89,8 +89,10 @@ define('drive'
 					DOMElements.backButton.href = "#"+ (currentDirectoryInfo.parent ? currentDirectoryInfo.parent : '');
 
 					var ancestors = currentDirectoryInfo.ancestors;
-					for(var i = 0; i < ancestors.length; i++) {
-						breadcrumbs.push(_.template(layouts.breadcrumbLink)({ name: ancestors[i].name, _id: ancestors[i]._id, className: '' }));
+					if(ancestors) {
+						for(var i = 0; i < ancestors.length; i++) {
+							breadcrumbs.push(_.template(layouts.breadcrumbLink)({ name: ancestors[i].name, _id: ancestors[i]._id, className: '' }));
+						}
 					}
 					breadcrumbs.push(_.template(layouts.breadcrumbLink)({ name: currentDirectoryInfo.name, _id: currentDirectoryInfo._id, className: 'active' }));
 

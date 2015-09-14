@@ -22,8 +22,18 @@ I'm developing this application mostly for study and test myself.
 
 
 ## To do
+* Use React.js to view rendering;
 * Recursive finder (to tree view);
 * ~~Recursive remove~~ (problems with orphan children);
 * ~~Breadcrumb links~~;
 * Upload file and see how to store the data (the folders will really exist in the hard drive and the files will be organized inside?);
 * Test it.
+
+
+## Resolving problem with MongoDB's module not found
+
+0. Copy the bson.js files
+
+    cp node_modules/monk/node_modules/mongodb/node_modules/bson/browser_build/bson.js node_modules/monk/node_modules/mongodb/node_modules/bson/build/Release/
+
+0. Restart your application and it's done!
