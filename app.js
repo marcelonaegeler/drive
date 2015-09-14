@@ -135,5 +135,5 @@ app.get('/*', function(req, res) {
 var server = app.listen(3001, function() {
 	var host = server.address().address
 		, port = server.address().port;
-	console.log('Drive app listening at http://%s:%s', host, port);
+	console.log('Magic happens on http://%s:%s', host, port);
 });
