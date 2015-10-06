@@ -132,7 +132,7 @@ app.get('/*', function(req, res) {
 	res.redirect('/');
 });
 */
-var server = app.listen(3001, function() {
+var server = app.listen(3000, function() {
 	var host = server.address().address
 		, port = server.address().port;
 	console.log('Magic happens on http://%s:%s', host, port);

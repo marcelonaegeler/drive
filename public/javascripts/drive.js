@@ -11,6 +11,8 @@ define('drive'
 			name: 'Drive'
 		};
 
+		console.log('ok');
+
 		var uploadInfo = {
 			uploads: []
 			, errors: []

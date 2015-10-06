@@ -3,6 +3,7 @@ var gulp = require('gulp')
   , cssmin = require('gulp-minify-css')
   , uglify = require('gulp-uglify')
   , del = require('del')
+  , exec = require('child_process').exec
   ;
 
 gulp.task('bower', function() {
@@ -28,6 +29,8 @@ gulp.task('js', [], function() {
     .pipe(gulp.dest('./public/build/javascripts'));
 });
 
-gulp.task('default', [ 'css', 'js' ], function() {
+gulp.task('default', [ 'watch' ], function() {
   console.log('Starting configs');
+  gulp.start('css', 'js');
+  exec('node app.js');
 });
