@@ -196,3 +196,9 @@ a {
 	overflow: hidden;
 	border: none;
 }
+
+
+.debug {
+	margin: 30px;
+	background-color: #fff;
+}

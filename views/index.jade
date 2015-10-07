@@ -1,12 +1,15 @@
 extends ./layout/layout.jade
 block body
-	div#main(data-require="drive")
+	div#main
 
 		div.topbar
 			h2= title
 
 		div.body
 			div.body-list
+				pre.debug
+					| {{ $data | json }}
+
 				section.drive-body
 					section.floating-bar
 						div.tr
@@ -19,9 +22,10 @@ block body
 								button.btn.btn-normal.btn-action(type="button", onclick="javascript:upload();")
 									i.material-icons.md-18 cloud_upload
 									|  Upload
-								button.btn.btn-normal.btn-action(type="button", onclick="javascript:mkdir();")
+								button.btn.btn-normal.btn-action(type="button", v-on="click:showMkdirInput = true")
 									i.material-icons.md-18 folder
 									|  Create directory
+					
 					div.tr.tr-h
 						div.ti.ti-8
 							span.ti-content Name
@@ -29,9 +33,47 @@ block body
 							span.ti-content Actions
 
 					div.drive-show-items
-						div.tr.tr-b
-							div.ti
+						div.tr.tr-b(v-show="folders.length == 0 && files.length == 0 && loading")
+							div.ti.ti-12
 								span.ti-content Loading...
+						div.tr.tr-b(v-show="folders.length == 0 && files.length == 0 && !loading")
+							div.ti.ti-12
+								span.ti-content Não há nada aqui :(
+
+						div.tr.tr-b(v-show="showMkdirInput")
+							div.ti.ti-12
+								span.ti-content 
+									input.tr-input(type="text", name="newFolder", placeholder="New folder", v-on="keydown:mkdirKeydown")
+
+						div.tr.tr-b(v-repeat="item:folders")
+							span.ti.ti-8
+								a.ti-content(v-attr="href: '#'+ item._id", v-on="click:folderChange")
+									i.material-icons.md-18 folder
+									|  {{item.name}}
+							span.ti.ti-4
+								span.ti-content
+									span.list-options
+										a.btn.btn-small.btn-list(href="javascript:void(0);", v-attr="data-id:item._id", v-on="click:rename")
+											i.material-icons.md-16 edit
+											|  Rename
+										a.btn.btn-small.btn-list(href="javascript:void(0);", v-attr="data-id:item._id", v-on="click:remove")
+											i.material-icons.md-16 delete
+											|  Delete
+
+						div.tr.tr-b(v-repeat="item:files")
+							span.ti.ti-8
+								a.ti-content(v-attr="href:item._id", target="_blank")
+									i.material-icons.md-18 description
+									|  {{item.name}}
+							span.ti.ti-4
+								span.ti-content
+									span.list-options
+										a.btn.btn-small.btn-list(href="javascript:void(0);", v-attr="data-id:item._id", v-on="click:rename")
+											i.material-icons.md-16 edit
+											|  Rename
+										a.btn.btn-small.btn-list(href="javascript:void(0);", v-attr="data-id:item._id", v-on="click:remove")
+											i.material-icons.md-16 delete
+											|  Delete
 
 				section.notify
 					div.drive-notify
@@ -47,4 +89,7 @@ block body
 	input.drive-input-upload(type="file", name="upload", multiple="multiple")
 	input#focus-out-trigger(type="text")
 
-	script(src="/vendor/requirejs/require.js", data-main="/build/javascripts/main.js")
+	//- script(src="/vendor/requirejs/require.js", data-main="/javascripts/main.js")
+	script(src="/vendor/vue/dist/vue.min.js")
+	script(src="/vendor/vue-resource/dist/vue-resource.min.js")
+	script(src="/javascripts/drive.js")

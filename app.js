@@ -82,9 +82,12 @@ app.post('/api/mkdir', function(req, res) {
 
 	directories.findOne({ _id: dirData.parent }, [ 'ancestors' ], function(err, doc) {
 		if(err) throw err;
-		dirData.ancestors = doc.ancestors;
+		if(doc.ancestors)
+			dirData.ancestors = doc.ancestors;
+		else
+			dirData.ancestors = [];
+		
 		dirData.ancestors.push(dirData.parent);
-
 		directories.insert(dirData, function() {
 			return res.send({ status: 0 });
 		});
