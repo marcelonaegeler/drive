@@ -60,9 +60,10 @@
 			, mkdirKeydown: function ($event) {
 				if ($event.keyCode == 13) { // Enter
 					if($event.target.value) {
-						var parent = appVue.$get('currentDirectoryInfo')._id;
+						var parent = appVue.$get('currentDirectoryInfo') ? appVue.$get('currentDirectoryInfo')._id : null;
 						appVue.$http.post('/api/mkdir', { name: $event.target.value, parent: parent }, function (data) {
 							appVue.$options.methods.getItems.apply(appVue);
+              appVue.$set('showMkdirInput', false);
 						});
 					}
 					return false;
@@ -71,6 +72,7 @@
 					appVue.$set('showMkdirInput', false);
 				}
 			}
+
 		}
 		, ready: function () {
 			if (window.location.hash)
