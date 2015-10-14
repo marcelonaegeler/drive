@@ -156,7 +156,7 @@ a {
 	color: #fff;
 }
 .upload-list .upload-list-body {
-	display: none;
+	/*display: none;*/
 	padding: 20px;
 }
 .upload-list .upload-list-body.open {

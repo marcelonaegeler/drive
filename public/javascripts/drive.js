@@ -1,17 +1,31 @@
 ;(function() {
 	"use strict";
 
+	var upload = function (arr, index) {
+		var len = arr.length;
+		if (index == undefined) {
+			index = 0;
+		}
+		if (index === len) {
+			return;
+		}
+
+		return upload(arr, index+1);
+	};
+
 	var appVue = new Vue({
 		el: '#main'
 		, data: {
 			folders: []
 			, files: []
+      , uploadingFiles: []
 			, currentDirectoryInfo: null
 			, loading: true
 			, activeHash: null
 			, showMkdirInput: false
 		}
 		, methods: {
+
 			getItems: function () {
 				var app = this;
 				var url = [ '/api/items', app.$get('activeHash') ].join('/');
@@ -46,6 +60,19 @@
 				});
 
 				return false;
+			}
+
+			, upload: function ($event) {
+				var files = $event.target.files;
+				var arrayFiles = appVue.uploadingFiles;
+				for(var i = 0, len = files.length; i < len; i++) {
+					var file = {};
+					file['name'] = files[i].name;
+					file['progress'] = 0;
+					arrayFiles.push(file);
+				}
+				appVue.uploadingFiles = arrayFiles;
+				upload(files);
 			}
 
 			/*

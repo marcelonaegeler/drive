@@ -7,6 +7,7 @@ block body
 
 		div.body
 			div.body-list
+				
 				pre.debug
 					| {{ $data | json }}
 
@@ -14,14 +15,14 @@ block body
 					section.floating-bar
 						div.tr
 							div.left
-								a.btn.btn-normal.btn-breadcrumb(href="javascript:void(0);", v-attr="href:'#'")
+								a.btn.btn-normal.btn-breadcrumb(href="#")
 									| Drive
 								a.btn.btn-normal.btn-breadcrumb(href="javascript:void(0);", v-repeat="item:currentDirectoryInfo.ancestors", v-attr="href:'#'+ item._id")
 									| {{item.name}}
-								a.btn.btn-normal.btn-breadcrumb(href="javascript:void(0);", v-attr="href:'#'+ currentDirectoryInfo._id")
+								a.btn.btn-normal.btn-breadcrumb(href="javascript:void(0);", v-attr="href:'#'+ currentDirectoryInfo._id", v-show="!!currentDirectoryInfo")
 									| {{currentDirectoryInfo.name}}
 							div.right
-								button.btn.btn-normal.btn-action(type="button", onclick="javascript:upload();")
+								label.btn.btn-normal.btn-action(for="upload")
 									i.material-icons.md-18 cloud_upload
 									|  Upload
 								button.btn.btn-normal.btn-action(type="button", v-on="click:showMkdirInput = true")
@@ -87,9 +88,12 @@ block body
 					a.upload-list-head(href="#") Files to upload
 					div.upload-list-body
 						div.drive-upload-list
+							ul
+								li(v-repeat="item:uploadingFiles")
+									| {{item.name}}
 
-	input.drive-input-upload(type="file", name="upload", multiple="multiple")
-	input#focus-out-trigger(type="text")
+		input#upload.drive-input-upload(type="file", name="upload", multiple="multiple", v-on="change: upload")
+		//- input#focus-out-trigger(type="text")
 
 	//- script(src="/vendor/requirejs/require.js", data-main="/javascripts/main.js")
 	script(src="/vendor/vue/dist/vue.min.js")
